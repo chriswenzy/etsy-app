@@ -139,7 +139,8 @@ export const Home = () => {
                     <Container>
                         <Row>
                             <Col md={3}>
-                            <Card>
+                            <Link to="/product">
+                            <Card className="text-dark">
                                 <Card.Img variant="top" src={productImg} />
                                 <Card.Body>
                                 <Card.Text>
@@ -155,6 +156,7 @@ export const Home = () => {
                                 </Card.Body>
                                 
                             </Card>
+                            </Link>
                             </Col>
                         </Row>
                     </Container>
