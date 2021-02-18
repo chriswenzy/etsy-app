@@ -55,6 +55,7 @@ export const Home = () => {
 
 const logout = () => {
         CometChat.logout().then(() => {
+            localStorage.removeItem("user")
           window.location.href = '/';
         });
       }
@@ -80,6 +81,8 @@ React.useEffect(()=>{
                     <Button variant="white" size="sm" className="m-3">Sign in</Button>
                     </Link>
                     }
+                    {localStorage.getItem('user') ? <Link  to="/create-product" > <Button variant="success" size="sm" className="m-3">+product</Button> </Link> :null}
+
                     <span><i className="fa fa-shopping-cart"></i></span>
                 </Navbar.Collapse>
                 </Navbar>
@@ -166,7 +169,7 @@ React.useEffect(()=>{
                         <Row>
                         {products.map((product)=>(
                             <Col md={3}>
-                            <Link to="/product">
+                            <Link to={`/product/${product.id}`}>
                             <Card className="text-dark">
                                 <Card.Img variant="top" src={productImg} />
                                 <Card.Body>

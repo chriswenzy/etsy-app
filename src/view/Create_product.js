@@ -28,7 +28,7 @@ const createProduct = async (e)=>{
     const data ={
         name,description,quantity,price,user
     }
-    const response = await fetch("http://localhost:5000/events/event", {
+    const response = await fetch("http://localhost:5000/products/product", {
         method: 'POST',
         mode: 'cors',
         credentials: 'same-origin', 
@@ -38,7 +38,7 @@ const createProduct = async (e)=>{
         body: JSON.stringify(data)
       });
       if(response){
-      history.push('/home')
+      history.push('/')
     }
 
 }

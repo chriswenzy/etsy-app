@@ -31,7 +31,7 @@ export const Product = ({match}) => {
 
 const getProduct = async ()=>{
         
-        const response = await fetch(`http://localhost:5000/events/event/${match.params.id}`, {
+        const response = await fetch(`http://localhost:5000/products/product/${match.params.id}`, {
             method: 'GET',
             mode: 'cors',
             credentials: 'same-origin', 
@@ -85,6 +85,7 @@ const sendMessage = (e)=>{
 
 const logout = () => {
         CometChat.logout().then(() => {
+        localStorage.removeItem("user")
           window.location.href = '/';
         });
       }
@@ -93,6 +94,7 @@ const chat = () =>{
     if(localStorage.getItem('user') == products.user){
         history.push('/chat')
     }else{
+        console.log("dfa");
         setActive(true)
     }
 }
@@ -142,7 +144,7 @@ React.useEffect(()=>{
                         </Col>
 
                         <Col md={6}>
-                        <h3 className="product-title">Fashion cloths</h3>
+                        <h3 className="product-title">{products.name}</h3>
 						<div className="rating">
 							<div className="stars">
 								<span className="fa fa-star checked"></span>
@@ -153,14 +155,12 @@ React.useEffect(()=>{
 							</div>
 							<span className="review-no">460 reviews</span>
 						</div>
-						<p> Suspendisse quos? Tempus cras iure temporibus? Eu 
-                            laudantium cubilia sem sem! Repudiandae et! Massa senectus 
-                            enim minim sociosqu delectus posuere.</p>
-						<h4>Current price: <span>$180</span></h4>
+						<p> {products.description}</p>
+						<h4>Current price: <span>{products.price}</span></h4>
 						
 						<div className="action">
 							<Button className="add-to-cart btn btn-default" type="button">Add to cart</Button>
-                            <Button onclick={chat} className="add-to-cart btn btn-default" type="button">Chat with {localStorage.getItem('user')?"vendor":"users"}</Button>
+                            <Button onClick={chat} className="add-to-cart btn btn-default" type="button">Chat</Button>
 
 							
 						</div>
@@ -168,7 +168,7 @@ React.useEffect(()=>{
                         </Row>
 
                     </Container>
-{active ? 
+{active == true ? 
                     <Container>
                         <Row>
                             <Col md={6}>

@@ -40,7 +40,7 @@ var user = new CometChat.User(UID);
             data => {
                 console.log(data)
                 localStorage.setItem("user",UID)
-              history.push('/home')
+              history.push('/')
             },
             error => {
               console.log("Login failed with exception:", { error });    
