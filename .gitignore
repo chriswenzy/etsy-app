@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/etsy-backend/node_modules
 /.pnp
 .pnp.js
 

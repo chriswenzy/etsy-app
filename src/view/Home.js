@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Col, Container, Button,Navbar, Nav, ListGroup,Form, FormControl, Card, CardDeck, Row} from 'react-bootstrap';
 import styled from 'styled-components';
 import productImg from '../assets/img/Juice.jpg'
-
+import {CometChat} from "@cometchat-pro/chat"
 
 const Styles = styled.div `
 .search-bar{
@@ -37,6 +37,30 @@ const Styles = styled.div `
 `
 
 export const Home = () => {
+    const [products, setProducts] = React.useState([])
+
+    const getProduct = async ()=>{
+        const response = await fetch("http://localhost:5000/products/products", {
+            method: 'GET',
+            mode: 'cors',
+            credentials: 'same-origin', 
+            headers: {
+              'Content-Type': 'application/json'
+            },
+          });
+          const data = await response.json()
+
+          setProducts(data); 
+    }
+
+const logout = () => {
+        CometChat.logout().then(() => {
+          window.location.href = '/';
+        });
+      }
+React.useEffect(()=>{
+    getProduct()
+},[])
     return (
         <Styles>
            
@@ -51,9 +75,11 @@ export const Home = () => {
                    
                     </Form>
                     </Nav>
+                    {localStorage.getItem('user') ? <small onClick={logout}>logout</small> :
                     <Link  to="/login" >
                     <Button variant="white" size="sm" className="m-3">Sign in</Button>
                     </Link>
+                    }
                     <span><i className="fa fa-shopping-cart"></i></span>
                 </Navbar.Collapse>
                 </Navbar>
@@ -138,26 +164,29 @@ export const Home = () => {
 
                     <Container>
                         <Row>
+                        {products.map((product)=>(
                             <Col md={3}>
                             <Link to="/product">
                             <Card className="text-dark">
                                 <Card.Img variant="top" src={productImg} />
                                 <Card.Body>
                                 <Card.Text>
-                                   Juice product
+                                   {product.name}
                                 </Card.Text>
-                                <small>LaurenShop</small>
+                                <small>{product.user}</small>
                                 <p>
                                     <i className="fa fa-star"></i>
                                     <i className="fa fa-star"></i>
                                     <i className="fa fa-star"></i>(75)
                                 </p>
-                                <small>674.09</small>
+                                <small>{product.price}</small>
                                 </Card.Body>
                                 
                             </Card>
                             </Link>
                             </Col>
+                        ))
+                        }
                         </Row>
                     </Container>
                     

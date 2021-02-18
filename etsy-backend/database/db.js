@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize')
 const db= {}
-const sequelize = new Sequelize('events','root','',{
+const sequelize = new Sequelize('ecommerce','root','',{
     host: 'localhost',
     dialect: 'mysql',
     port:3306,

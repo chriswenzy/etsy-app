@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Col, Container, Button,Navbar, Nav, ListGroup,Form, FormControl, Card, CardDeck, Row} from 'react-bootstrap';
+import { Col, Container, Button,Navbar, Nav, ListGroup,Form, FormControl, Card, Row} from 'react-bootstrap';
 import styled from 'styled-components';
 import productImg from '../assets/img/Juice.jpg'
-
+import {CometChat} from "@cometchat-pro/chat"
+import { useHistory } from 'react-router'
 
 const Styles = styled.div `
 
@@ -20,7 +21,85 @@ const Styles = styled.div `
 
 `
 
-export const Product = () => {
+export const Product = ({match}) => {
+    const [products, setProducts] = React.useState([])
+    const [messages,setMessages] = React.useState([])
+    const [message,setMessage]= React.useState('')
+    const [active,setActive] = React.useState(false)
+    const history = useHistory()
+
+
+const getProduct = async ()=>{
+        
+        const response = await fetch(`http://localhost:5000/events/event/${match.params.id}`, {
+            method: 'GET',
+            mode: 'cors',
+            credentials: 'same-origin', 
+            headers: {
+              'Content-Type': 'application/json'
+            },
+          });
+          const datas = await response.json()
+          setProducts(datas); 
+    }
+
+    CometChat.addMessageListener(
+        "UNIQUE_LISTENER_ID",
+        new CometChat.MessageListener({
+          onTextMessageReceived: textMessage => {
+            console.log("Text message received successfully", textMessage);
+            const data = {
+                'name':textMessage.sender.name,
+                'text':textMessage.text
+            }
+            setMessages(messages.concat(data))
+          }
+        })
+      );
+
+
+const sendMessage = (e)=>{
+        e.preventDefault()
+    
+    var receiverID = products.user;
+    var messageText = message;
+    var receiverType = CometChat.RECEIVER_TYPE.USER;
+    
+    var textMessage = new CometChat.TextMessage(
+      receiverID,
+      messageText,
+      receiverType
+    );
+    
+    CometChat.sendMessage(textMessage).then(
+      message => {
+        console.log("Message sent successfully:", message);
+        setMessage('')
+        const data = {
+            'name':message.sender.name,
+            'text':message.text
+        }
+        setMessages(messages.concat(data))
+    })
+    }
+
+const logout = () => {
+        CometChat.logout().then(() => {
+          window.location.href = '/';
+        });
+      }
+
+const chat = () =>{
+    if(localStorage.getItem('user') == products.user){
+        history.push('/chat')
+    }else{
+        setActive(true)
+    }
+}
+
+React.useEffect(()=>{
+    getProduct()
+},[])
     return (
         <Styles>
            
@@ -35,9 +114,11 @@ export const Product = () => {
                    
                     </Form>
                     </Nav>
+                    {localStorage.getItem('user') ? <small onClick={logout}>logout</small> :
                     <Link  to="/login" >
                     <Button variant="white" size="sm" className="m-3">Sign in</Button>
                     </Link>
+                    }
                     <span><i className="fa fa-shopping-cart"></i></span>
                 </Navbar.Collapse>
                 </Navbar>
@@ -79,21 +160,36 @@ export const Product = () => {
 						
 						<div className="action">
 							<Button className="add-to-cart btn btn-default" type="button">Add to cart</Button>
+                            <Button onclick={chat} className="add-to-cart btn btn-default" type="button">Chat with {localStorage.getItem('user')?"vendor":"users"}</Button>
+
 							
 						</div>
                         </Col>
                         </Row>
 
                     </Container>
-
+{active ? 
                     <Container>
                         <Row>
                             <Col md={6}>
-                            <h3>Insert your chat sdk here!!</h3>
+                            <div className="">
+                   {messages.map((message,i)=>(
+                    <div className="" key={i}>
+                    <p><span><b>{message.sender ? message.sender.name:message.name}:</b></span> {message.text}</p>
+                    </div>
+                   ))}
+                   </div>
+                   
+                <div className="msg">
+                    <form onSubmit={sendMessage}>   
+                    <input type="text" placeholder="Say something" value={message} onChange={(e)=> setMessage(e.target.value)} />
+                    <button type="submit"> <i className="fa fa-send"></i>  </button>
+                    </form>
+                   </div>
                             </Col>
                         </Row>
                     </Container>
-               
+               : null}
         </Styles>
     )
 }

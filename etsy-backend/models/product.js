@@ -3,19 +3,25 @@ const db = require('../database/db')
 
 
 module.exports = db.sequelize.define(
-    'events', {
+    'products', {
         id:{
             type:Sequelize.STRING,
             primaryKey:true,
         },
         
-        title:{
+        name:{
             type:Sequelize.STRING
         },
         description:{
             type:Sequelize.STRING
         },
-        stream:{
+        quantity:{
+            type:Sequelize.INTEGER
+        },
+        price:{
+            type:Sequelize.INTEGER
+        },
+        user:{
             type:Sequelize.STRING
         },
     

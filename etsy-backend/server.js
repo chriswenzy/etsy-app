@@ -9,9 +9,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 
-var Users = require("./routes/events");
+var products = require("./routes/products");
 
-app.use("/events", Users);
+app.use("/products", products);
 
 app.use(express.static(__dirname + "/public"));
 app.listen(port, () => {

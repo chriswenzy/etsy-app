@@ -1,8 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { Col, Container, Button, Form, Card, Row} from 'react-bootstrap';
 import styled from 'styled-components';
-
+import {AUTH_KEY} from '../constant/constant'
+import  {CometChat} from '@cometchat-pro/chat'
+import { useHistory } from 'react-router'
 
 const Styles = styled.div `
 .form-div{
@@ -12,6 +13,43 @@ const Styles = styled.div `
 `
 
 export const Login = () => {
+    const [username, setUsername] = React.useState('')
+    const history = useHistory()
+
+
+
+const formsubmit = async (e) =>{
+    e.preventDefault()
+  
+    const UID = username
+var user = new CometChat.User(UID);
+ CometChat.createUser(user, AUTH_KEY).then(
+    user => {
+        console.log("user created", user);
+        CometChat.login(UID,AUTH_KEY).then(
+            data => {
+                history.push('/home')
+                localStorage.setItem("user",UID)
+            },
+            error => {
+              console.log("Login failed with exception:", { error });    
+            }
+          );
+    },error => {
+        CometChat.login(UID,AUTH_KEY).then(
+            data => {
+                console.log(data)
+                localStorage.setItem("user",UID)
+              history.push('/home')
+            },
+            error => {
+              console.log("Login failed with exception:", { error });    
+            }
+            )
+        }
+          );
+}
+
     return (
         <Styles>
            
@@ -22,17 +60,15 @@ export const Login = () => {
                         <Col md={8}>
                         <Card className="shadow bg-white" >
                     <Card.Body>
-                    <Form >
+                    <Form onSubmit={formsubmit}>
                     <Form.Group as={Col}  controlId="username">
                         <Form.Label>Username</Form.Label>
-                        <Form.Control type="text" placeholder="Enter username" />
+                        <Form.Control type="text" placeholder="Enter username" onChange={(e)=> setUsername(e.target.value)}/>
             
                     </Form.Group>
 
                     <div className="text-center">
-                        <Link to="/home">
-                        <Button variant="success" size="lg">Login</Button>
-                        </Link>
+                        <Button type='submit' variant="success" size="lg">Login</Button>
                     </div>
 
                     </Form>
